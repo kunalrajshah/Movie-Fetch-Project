@@ -49,18 +49,25 @@ const App = () => {
     }
     setLoading(false);
   };
+
+  let content=<h2 style={{ textAlign: "center" }}>Found no Movie</h2>
+  if(movies.length>0){
+    content=<MoviesList movies={movies} />
+  }
+  if(iserr){
+    content=<h2>{iserr}</h2>
+  }
+  if(isLoading){
+    content=<h2>Loading ...</h2>
+  }
+
   return (
     <React.Fragment>
       <section>
         <button onClick={movieFetchHandler}>Fetch Movies</button>
       </section>
       <section>
-        {!isLoading && movies.length > 0 && <MoviesList movies={movies} />}
-        {!isLoading && movies.length === 0 && !iserr && (
-          <h2 style={{ textAlign: "center" }}>Found No Movies</h2>
-        )}
-        {isLoading && !iserr && <h2 style={{ textAlign: "center" }}>Loading...</h2>}
-        {iserr && <h2 style={{ textAlign: "center" }}>{iserr}</h2>}
+       {content}
       </section>
     </React.Fragment>
   );
