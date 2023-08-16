@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect,useCallback } from "react";
 
 import MoviesList from "./components/MoviesList";
 import "./App.css";
@@ -27,7 +27,7 @@ const App = () => {
   // }
 
   // With asynch function(in async functio handle err by try and catch)
-  const movieFetchHandler = async () => {
+  const movieFetchHandler = useCallback(async () => {
     setLoading(true);
     try {
       const storeData = await fetch("https://swapi.dev/api/films");
@@ -48,9 +48,13 @@ const App = () => {
       setErr(err.message);
     }
     setLoading(false);
-  };
+  },[]);
 
-  let content=<h2 style={{ textAlign: "center" }}>Found no Movie</h2>
+  useEffect(()=>{
+    movieFetchHandler();
+  },[movieFetchHandler])
+
+  let content=<h2>Found no Movie</h2>
   if(movies.length>0){
     content=<MoviesList movies={movies} />
   }
