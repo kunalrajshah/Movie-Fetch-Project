@@ -11,7 +11,6 @@ function App() {
 
   const fetchMoviesHandler = useCallback(async () => {
     setIsLoading(true);
-    setError(null);
     // Get Method
     try {
       const response = await fetch(
@@ -24,15 +23,15 @@ function App() {
       const data = await response.json();
       // console.log(data);  it return a object.
 
-      const LoadedMovie=[];
-      
-      for(const key in data){
+      const LoadedMovie = [];
+
+      for (const key in data) {
         LoadedMovie.push({
-          id:key,
-          title : data[key].title ,
-          openingText:data[key].openingText,
-          releaseDate:data[key].releaseDate
-        })
+          id: key,
+          title: data[key].title,
+          openingText: data[key].openingText,
+          releaseDate: data[key].releaseDate,
+        });
       }
       setMovies(LoadedMovie);
     } catch (error) {
@@ -41,12 +40,7 @@ function App() {
     setIsLoading(false);
   }, []);
 
-  useEffect(() => {
-    fetchMoviesHandler();
-  }, [fetchMoviesHandler]);
-
   // Post Method
-
   const addMovieHandler = async (movie) => {
     const response = await fetch(
       "https://react-http-a47ef-default-rtdb.firebaseio.com/movies.json",
@@ -60,7 +54,14 @@ function App() {
     // firebase always return autogenerateID.
     const data = await response.json();
     console.log("data", data);
+    // After successfully adding the movie, trigger fetchMoviesHandler to update the movie list.
+    fetchMoviesHandler();
   };
+
+  // geting data from firebase on refresh.
+  useEffect(() => {
+    fetchMoviesHandler();
+  }, [fetchMoviesHandler]);
 
   let content = <h1>Found no movies.</h1>;
 
