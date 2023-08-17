@@ -18,3 +18,8 @@
   margin: 0;
   font-size: 1rem;
 }
+
+.btn{
+  text-align: center;
+  border: 1px solid red;
+}

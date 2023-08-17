@@ -58,6 +58,17 @@ function App() {
     fetchMoviesHandler();
   };
 
+  // Delete Data from dataBase and screen.
+  const deleteMovieHandler=async(id)=>{
+     await fetch(`https://react-http-a47ef-default-rtdb.firebaseio.com/movies/${id}.json`,{
+      method:"DELETE"
+    })
+
+    // filter Data
+    setMovies((prevMovie)=>prevMovie.filter((mov)=>mov.id !== id));
+    
+  };
+
   // geting data from firebase on refresh.
   useEffect(() => {
     fetchMoviesHandler();
@@ -66,7 +77,7 @@ function App() {
   let content = <h1>Found no movies.</h1>;
 
   if (movies.length > 0) {
-    content = <MoviesList movies={movies} />;
+    content = <MoviesList movies={movies} onDel={deleteMovieHandler} />;
   }
 
   if (error) {
