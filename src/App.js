@@ -1,80 +1,73 @@
-import React, { useState,useEffect,useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 
-import MoviesList from "./components/MoviesList";
-import "./App.css";
+import MoviesList from './components/MoviesList';
+import AddMovie from './components/AddMovie';
+import './App.css';
 
-const App = () => {
+function App() {
   const [movies, setMovies] = useState([]);
-  const [isLoading, setLoading] = useState(false);
-  const [iserr, setErr] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Without async function(in normal function try err by .catch)
-
-  // const movieFetchHandler=()=>{
-  //   fetch("https://swapi.dev/api/films").then((result)=>{
-  //     return result.json(); //it return promise also
-  //   }).then((data)=>{
-  //     const transformedData=data.results.map((movieData)=>{
-  //       return{
-  //         id:movieData.episode_id,
-  //         title:movieData.title,
-  //         releaseDate:movieData.release_date,
-  //         openingText:movieData.opening_crawl,
-  //       }
-  //     })
-  //     setMovies(transformedData);
-  //   })
-  // }
-
-  // With asynch function(in async functio handle err by try and catch)
-  const movieFetchHandler = useCallback(async () => {
-    setLoading(true);
+  const fetchMoviesHandler = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
     try {
-      const storeData = await fetch("https://swapi.dev/api/films");
-      if(!storeData.ok){
-        throw new Error('Something went Wrong !!');//throw error
+      const response = await fetch('https://swapi.dev/api/films/');
+      if (!response.ok) {
+        throw new Error('Something went wrong!');
       }
-      const trData = await storeData.json();
-      const transformedData = trData.results.map((movieData) => {
+
+      const data = await response.json();
+
+      const transformedMovies = data.results.map((movieData) => {
         return {
           id: movieData.episode_id,
           title: movieData.title,
-          releaseDate: movieData.release_date,
           openingText: movieData.opening_crawl,
+          releaseDate: movieData.release_date,
         };
       });
-      setMovies(transformedData);
-    } catch (err) {
-      setErr(err.message);
+      setMovies(transformedMovies);
+    } catch (error) {
+      setError(error.message);
     }
-    setLoading(false);
-  },[]);
+    setIsLoading(false);
+  }, []);
 
-  useEffect(()=>{
-    movieFetchHandler();
-  },[movieFetchHandler])
+  useEffect(() => {
+    fetchMoviesHandler();
+  }, [fetchMoviesHandler]);
 
-  let content=<h2>Found no Movie</h2>
-  if(movies.length>0){
-    content=<MoviesList movies={movies} />
+  function addMovieHandler(movie) {
+    console.log(movie);
   }
-  if(iserr){
-    content=<h2>{iserr}</h2>
+
+  let content = <h1>Found no movies.</h1>;
+
+  if (movies.length > 0) {
+    content = <MoviesList movies={movies} />;
   }
-  if(isLoading){
-    content=<h2>Loading ...</h2>
+
+  if (error) {
+    content = <h1>{error}</h1>;
+  }
+
+  if (isLoading) {
+    content = <h1>Loading...</h1>;
   }
 
   return (
     <React.Fragment>
       <section>
-        <button onClick={movieFetchHandler}>Fetch Movies</button>
+        <AddMovie onAddMovie={addMovieHandler} />
       </section>
       <section>
-       {content}
+        <button onClick={fetchMoviesHandler}>Fetch Movies</button>
       </section>
+      <section>{content}</section>
     </React.Fragment>
   );
-};
+}
 
 export default App;

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import Movie from './Movie';
 import classes from './MoviesList.module.css';
 
